@@ -8,6 +8,7 @@ import 'package:TOIO/view/widgets/slidable_action.dart';
 
 import '../../../controller/app_cubit.dart';
 
+// ignore: must_be_immutable
 class BuildTaskItem extends StatefulWidget {
   final Map model;
   final BuildContext context;

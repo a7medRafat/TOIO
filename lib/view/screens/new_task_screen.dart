@@ -14,7 +14,7 @@ import '../widgets/create_new_task/time_picker.dart';
 
 // ignore: must_be_immutable
 class CreateNewTask extends StatefulWidget {
-  CreateNewTask({super.key});
+  const CreateNewTask({super.key});
 
   @override
   State<CreateNewTask> createState() => _CreateNewTaskState();
@@ -62,7 +62,7 @@ class _CreateNewTaskState extends State<CreateNewTask> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          DayTimePicker(),
+                          const DayTimePicker(),
                           SizedBox(
                               width: MediaQuery.of(context).size.width * 0.05),
                           FooterItem(

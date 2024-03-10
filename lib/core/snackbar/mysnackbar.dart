@@ -1,25 +1,19 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 
-
-class MySnackBar {
-  snackBarMessage(context, String msg) =>
-      ScaffoldMessenger.of(context).showSnackBar(
-
-          SnackBar(
-              margin: EdgeInsets.only(
-                  left: 10,
-                  right: 10),
-              behavior: SnackBarBehavior.floating,
-              padding: const EdgeInsets.all(20),
-              backgroundColor:Theme.of(context).scaffoldBackgroundColor,
-              elevation: 2,
-              content: Text(
-                msg,
-                style: Theme
-                    .of(context)
-                    .textTheme
-                    .bodySmall!,
-              )));
+class StyledToast {
+  static show({required context, required String text}) {
+    showToast(
+      text,
+      context: context,
+      textStyle: Theme.of(context).textTheme.bodySmall,
+      animation: StyledToastAnimation.scale,
+      reverseAnimation: StyledToastAnimation.slideFromBottomFade,
+      position: StyledToastPosition.bottom,
+      animDuration: const Duration(seconds: 1),
+      duration: const Duration(seconds: 4),
+      curve: Curves.elasticOut,
+      reverseCurve: Curves.linear,
+    );
+  }
 }
-

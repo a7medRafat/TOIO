@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:TOIO/view/screens/setting_screen.dart';
 import '../../../config/colors.dart';
 
 class MenuItem extends StatelessWidget {

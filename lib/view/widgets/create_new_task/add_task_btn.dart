@@ -1,11 +1,10 @@
+import 'package:TOIO/core/snackbar/mysnackbar.dart';
 import 'package:flutter/material.dart';
-import 'package:TOIO/view/screens/drawer_screen.dart';
 import '../../../controller/app_cubit.dart';
 import '../../../core/shared_preferances/cache_helper.dart';
-import '../../../core/utils/navigation.dart';
 
 class AddTaskBtn extends StatelessWidget {
-  AddTaskBtn({super.key, required this.formKey});
+  const AddTaskBtn({super.key, required this.formKey});
 
   final GlobalKey<FormState> formKey;
 
@@ -24,23 +23,20 @@ class AddTaskBtn extends StatelessWidget {
               cubit.taskTimePicker != null &&
               cubit.selectedDate != null) {
             cubit.getCompleteDate();
-            cubit
-                .insetToDateBase(
-                    title: cubit.myController.text,
-                    fav: cubit.isFav,
-                    time: cubit.taskTimePicker!.format(context),
-                    date: cubit.selectedDate.toString().trim(),
-                    completeDate: cubit.completeDateTime.toString(),
-                    type: CacheHelper.getData(key: 'taskType'))
-                .then((value) {
-              CacheHelper.getData(key: 'taskType') == 'Personal'
-                  ? cubit.getPersonalTasks()
-                  : cubit.getBusinessTasks();
-              Navigation().navigateTo(context, DrawerScreen());
-              cubit.taskTimePicker = null;
-              cubit.taskFav = false;
-              cubit.selectedDate = null;
-            });
+            if (cubit.businessTasks.length == 10 ||
+                cubit.personalTasks.length == 10) {
+              StyledToast.show(
+                  context: context, text: 'tasks shoul\'d be more than 10');
+            } else {
+              cubit.insetToDateBase(
+                  title: cubit.myController.text,
+                  fav: cubit.isFav,
+                  time: cubit.taskTimePicker!.format(context),
+                  date: cubit.selectedDate.toString().trim(),
+                  completeDate: cubit.completeDateTime.toString(),
+                  type: CacheHelper.getData(key: 'taskType'),
+                  context: context);
+            }
           }
         },
         child: Icon(Icons.add, color: Theme.of(context).iconTheme.color));

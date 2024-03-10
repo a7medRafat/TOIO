@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
@@ -21,7 +20,7 @@ class CiclePercentage extends StatelessWidget {
       backgroundColor:
       AppColors().favColor.withOpacity(0.4),
       progressColor: Colors.purple,
-      center: CircleAvatar(
+      center: const CircleAvatar(
         radius: 35,
         backgroundImage:
         AssetImage('images/img.jpg'),

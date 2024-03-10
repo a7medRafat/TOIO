@@ -35,7 +35,7 @@ class DropDownList extends StatelessWidget {
         },
 
         dropdownStyleData: DropdownStyleData(
-          direction: AppCubit.get(context).arabicLang ?DropdownDirection.right :DropdownDirection.left ,
+          direction: AppCubit.get(context).isArabic ?DropdownDirection.right :DropdownDirection.left ,
           width: 90,
           padding: const EdgeInsets.symmetric(vertical: 6),
           decoration: BoxDecoration(
@@ -82,12 +82,12 @@ abstract class MenuItems {
   static void onChanged(BuildContext context, MenuItem item) {
     switch (item) {
       case MenuItems.english:
-        if(AppCubit.get(context).arabicLang == true){
+        if(AppCubit.get(context).isArabic == true){
           AppCubit.get(context).changLang();
         }
         break;
       case MenuItems.arabic:
-        if(AppCubit.get(context).arabicLang == false){
+        if(AppCubit.get(context).isArabic == false){
           AppCubit.get(context).changLang();
         }
         break;

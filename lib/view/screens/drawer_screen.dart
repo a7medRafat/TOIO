@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
@@ -23,7 +22,7 @@ class DrawerScreen extends StatelessWidget {
           borderRadius: 24.0,
           showShadow: true,
           angle: 0,
-          isRtl: AppCubit.get(context).arabicLang,
+          isRtl: AppCubit.get(context).isArabic,
           drawerShadowsBackgroundColor: Colors.grey,
           slideWidth: MediaQuery.of(context).size.width * .75,
           openCurve: Curves.fastOutSlowIn,

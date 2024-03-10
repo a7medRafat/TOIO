@@ -1,4 +1,6 @@
-import 'package:day_night_time_picker/lib/constants.dart';
+import 'package:TOIO/core/snackbar/mysnackbar.dart';
+import 'package:TOIO/core/utils/navigation.dart';
+import 'package:TOIO/view/screens/drawer_screen.dart';
 import 'package:day_night_time_picker/lib/daynight_timepicker.dart';
 import 'package:day_night_time_picker/lib/state/time.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +8,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:TOIO/core/shared_preferances/cache_helper.dart';
 import 'package:sqflite/sqflite.dart';
+
+// ignore: depend_on_referenced_packages
 import 'package:timezone/timezone.dart' as tz;
 import '../core/notification/local.dart';
 
@@ -27,21 +31,20 @@ class AppCubit extends Cubit<AppState> {
     }, onOpen: (database) {})
         .then((value) {
       db = value;
-      // getDataFromDatabase();
       getAllTasks();
       getPersonalTasks();
       getBusinessTasks();
     });
   }
 
-  Future insetToDateBase({
-    required title,
-    required time,
-    required date,
-    required completeDate,
-    required type,
-    required fav,
-  }) async {
+  Future insetToDateBase(
+      {required title,
+      required time,
+      required date,
+      required completeDate,
+      required type,
+      required fav,
+      required context}) async {
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
     if (completeDateTime!.isAfter(now)) {
       return await db!.transaction((txn) async {
@@ -49,21 +52,29 @@ class AppCubit extends Cubit<AppState> {
             .rawInsert(
                 'INSERT INTO $tableName (title , time , date , completeDate ,  type , status , isFav )VALUES ("$title"  ,"$time"," $date" , "$completeDate" , "$type"  ,"new" , "$fav")')
             .then((value) {
-          print('$value inserted successfully');
+          CacheHelper.getData(key: 'taskType') == 'Personal'
+              ? getPersonalTasks()
+              : getBusinessTasks();
+          Navigation().navigateTo(context, DrawerScreen());
           getAllTasks();
+
           LocalNotifications.showScheduleNotification(
               payload: 'aa',
               scheduleDate: selectedDate!.add(Duration(
                   hours: taskTimePicker!.hour,
                   minutes: taskTimePicker!.minute)),
               body: myController.text);
+          taskTimePicker = null;
+          taskFav = false;
+          selectedDate = null;
+          myController.clear();
           emit(TaskInsertedSuccessState());
         }).catchError((error) {
-          print('error in inserting data${error.toString()}');
           emit(TaskInsertedErrorrState());
         });
-        return null;
       });
+    } else {
+      StyledToast.show(context: context, text: 'task must be in future');
     }
   }
 
@@ -102,9 +113,7 @@ class AppCubit extends Cubit<AppState> {
         }
       }
       emit(GetAllTasksSuccessState());
-    }).catchError((error) {
-      print(error.toString());
-    });
+    }).catchError((error) {});
   }
 
   Future updateData({required String status, required int id}) async {
@@ -165,6 +174,8 @@ class AppCubit extends Cubit<AppState> {
   void deleteTask({required int id}) async {
     await db!
         .rawDelete('DELETE FROM $tableName  WHERE id = ?', [id]).then((value) {
+      getPersonalTasks();
+      getBusinessTasks();
       getAllTasks();
     });
   }
@@ -231,7 +242,6 @@ class AppCubit extends Cubit<AppState> {
     } else {
       isFav = 'no';
     }
-    print(isFav);
     emit(AppTaskChangeFavStates());
   }
 
@@ -240,34 +250,32 @@ class AppCubit extends Cubit<AppState> {
     getAllTasks();
   }
 
-  bool isDark = false;
+  bool isDark = true;
 
   void changeAppMood({bool? fromShared}) {
     if (fromShared != null) {
       isDark = fromShared;
+      emit(AppChangeAppMoodSuccessStates());
     } else {
       isDark = !isDark;
+      CacheHelper.putBoolean(key: 'isDark', value: isDark).then((value) {
+        emit(AppChangeAppMoodSuccessStates());
+      });
     }
-    CacheHelper.putBoolean(key: 'isDark', value: isDark).then((value) {
-      emit(AppChangeAppMoodSuccessStates());
-    }).catchError((error) {
-      emit(AppChangeAppMoodErrorStates());
-    });
   }
 
-  bool arabicLang = false;
+  bool isArabic = true;
 
   changLang({bool? fromShared}) {
     if (fromShared != null) {
-      arabicLang = fromShared;
-    } else {
-      arabicLang = !arabicLang;
-    }
-    CacheHelper.putBoolean(key: 'lang', value: arabicLang).then((value) {
+      isArabic = fromShared;
       emit(AppChangeLangStates());
-    }).catchError((error) {
-      emit(AppChangeLangErrorStates());
-    });
+    } else {
+      isArabic = !isArabic;
+      CacheHelper.putBoolean(key: 'arabicLang', value: isArabic).then((value) {
+        emit(AppChangeLangStates());
+      });
+    }
   }
 
   var iconbtn = Icons.edit;

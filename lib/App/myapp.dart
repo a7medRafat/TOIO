@@ -9,8 +9,13 @@ import '../generated/l10n.dart';
 import '../view/screens/splash_screen.dart';
 import 'injuctoin_container.dart';
 
+// ignore: must_be_immutable
 class MyApp extends StatefulWidget {
   MyApp({super.key});
+
+  bool? isDark = CacheHelper.getBoolean(key: 'isDark');
+  bool? isArabic = CacheHelper.getBoolean(key: 'arabicLang');
+
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -29,17 +34,18 @@ class _MyAppState extends State<MyApp> {
       providers: [
         BlocProvider.value(
             value: sl<AppCubit>()
-              ..changeAppMood(fromShared: CacheHelper.getBoolean(key: 'isDark'))
-              ..changLang(fromShared: CacheHelper.getBoolean(key: 'lang'))),
+              ..initDatabase()
+              ..changeAppMood(fromShared: widget.isDark)
+              ..changLang(fromShared: widget.isArabic)),
       ],
       child: BlocConsumer<AppCubit, AppState>(
         listener: (context, state) {},
         builder: (context, state) {
           return MaterialApp(
-              locale: sl<AppCubit>().arabicLang == true
-                  ? const Locale('ar','')
-                  : const Locale('en',''),
-              localizationsDelegates:  const [
+              locale: AppCubit.get(context).isArabic == true
+                  ? const Locale('ar', '')
+                  : const Locale('en', ''),
+              localizationsDelegates: const [
                 S.delegate,
                 GlobalMaterialLocalizations.delegate,
                 GlobalWidgetsLocalizations.delegate,
@@ -49,7 +55,7 @@ class _MyAppState extends State<MyApp> {
               debugShowCheckedModeBanner: false,
               theme: AppTheme().light,
               darkTheme: AppTheme().dark,
-              themeMode: sl<AppCubit>().isDark == true
+              themeMode: AppCubit.get(context).isDark == true
                   ? ThemeMode.dark
                   : ThemeMode.light,
               home: const SplashScreen());

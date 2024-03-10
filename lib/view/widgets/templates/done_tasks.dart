@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:TOIO/generated/l10n.dart';
 import 'package:TOIO/view/widgets/templates/templates_task_item.dart';
